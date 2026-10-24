@@ -234,7 +234,7 @@ $: if (allPosts.length > 0 && keyword && sortAsc !== undefined) {
       bg-white/5 hover:bg-white/10 focus-within:bg-white/10
 ">
     <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-white/30"></Icon>
-    <input placeholder="搜索" bind:value={keyword} on:focus={() => { void reopenPanelIfHasQuery(); }}
+    <input aria-label="搜索文章" placeholder="搜索" bind:value={keyword} on:focus={() => { void reopenPanelIfHasQuery(); }}
            on:input={sanitizeKeyword}
            on:compositionstart={() => { isComposingDesktop = true; }}
            on:compositionend={() => { isComposingDesktop = false; sanitizeKeyword(); }}
@@ -246,7 +246,7 @@ $: if (allPosts.length > 0 && keyword && sortAsc !== undefined) {
 <!-- search bar for phone/tablet view -->
 <div id="search-bar-mobile" class="relative flex h-11 flex-1 items-center rounded-lg bg-white/5 transition hover:bg-white/10 focus-within:bg-white/10 min-[1066px]:hidden">
     <Icon icon="material-symbols:search" class="pointer-events-none absolute ml-3 text-[1.25rem] text-white/30 transition"></Icon>
-    <input placeholder="搜索" bind:value={keyword} on:focus={() => { void openPanel(); }}
+    <input aria-label="搜索文章" placeholder="搜索" bind:value={keyword} on:focus={() => { void openPanel(); }}
            on:input={sanitizeKeyword}
            on:compositionstart={() => { isComposingMobile = true; }}
            on:compositionend={() => { isComposingMobile = false; sanitizeKeyword(); }}
