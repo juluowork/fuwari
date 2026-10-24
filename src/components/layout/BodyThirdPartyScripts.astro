@@ -8,6 +8,12 @@ const gaId = analyticsConfig.enable ? (analyticsConfig.gaMeasurementId ?? "") : 
 const clarityId = analyticsConfig.enable ? (analyticsConfig.clarityProjectId ?? "") : "";
 ---
 
+<!-- preload：横幅脚本 66KB，等到 DOMContentLoaded 才开始下载会把「大块文本」的出现时间
+     推到 7 秒之后，而 LCP 会一直等那个大块。提前预取可让它早一点出现。 -->
+<link rel="preload" as="script" href="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js" crossorigin>
+<link rel="preconnect" href="https://www.termsfeed.com" crossorigin>
+<link rel="preconnect" href="https://www.googletagmanager.com">
+
 <script type="text/javascript">
 (function () {
 	const load = () => {
@@ -64,6 +70,33 @@ const clarityId = analyticsConfig.enable ? (analyticsConfig.clarityProjectId ?? 
 		website_name: cookieConsentConfig.siteName,
 		website_privacy_policy_url: cookieConsentConfig.privacyPolicyUrl,
 		open_preferences_center_selector: "#open_preferences_center",
+	};
+
+	// 让横幅在手机上变成紧凑条（类名见官方 API 文档：.termsfeed-com---nb / .cc-nb-title /
+	// .cc-nb-text / .cc-nb-buttons）。原因：默认样式下它约 360x490，比页面上任何正文块都大，
+	// 又是最后才出现的元素，于是成了 LCP —— 实测 LCP 元素就是 p.cc-nb-text。
+	// 压缩后「完整说明」仍可点「更改我的偏好」查看，所以披露并没有减少。
+	const COMPACT_BANNER_CSS = `
+		@media (max-width: 767px) {
+			.termsfeed-com---nb { max-width: 320px !important; }
+			.termsfeed-com---nb .cc-nb-main-container { padding: 10px 12px !important; }
+			.termsfeed-com---nb .cc-nb-title { font-size: 13px !important; line-height: 1.3 !important; margin: 0 0 4px !important; }
+			.termsfeed-com---nb .cc-nb-text { font-size: 11px !important; line-height: 1.35 !important; margin: 0 !important;
+				display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+			.termsfeed-com---nb .cc-nb-buttons { margin-top: 6px !important; }
+			.termsfeed-com---nb .cc-nb-okagree,
+			.termsfeed-com---nb .cc-nb-changep,
+			.termsfeed-com---nb .cc-nb-reject { padding: 6px 10px !important; font-size: 12px !important; }
+			[class*="termsfeed-com---palette-"] .cc-nb-okagree { background: var(--primary) !important; color: #111 !important; }
+		}
+	`;
+
+	const injectCompactBannerCss = () => {
+		if (document.getElementById("cc-compact-style")) return;
+		const style = document.createElement("style");
+		style.id = "cc-compact-style";
+		style.textContent = COMPACT_BANNER_CSS;
+		document.head.appendChild(style);
 	};
 
 	const PERSISTENT_ATTR = "data-cookie-consent-persistent";
@@ -129,6 +162,7 @@ const clarityId = analyticsConfig.enable ? (analyticsConfig.clarityProjectId ?? 
 	const runCookieConsent = () => {
 		const cc = window.cookieconsent;
 		if (!cc || typeof cc.run !== "function") return;
+		injectCompactBannerCss();
 		cc.run({ ...baseConfig, palette: getPalette() });
 		scheduleApplyPalette();
 	};
