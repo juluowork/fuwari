@@ -160,3 +160,12 @@ $node = (Get-Command node).Source
 - key 文件：`public/<key>.txt`（构建后即公开，`https://blog.peroe.cn/<key>.txt`）；
 - 当前 key 存在本地 `C:\Users\juluo\.dsh-tools\shots\.indexnow-key`，不进仓库；
 - 发布新文章后跑一次 `--new N` 即可。
+
+## 九、写作时的两个渲染陷阱（写文章后必检查）
+
+1. **裸写 `og:image` 会被渲染成 `<img>`**：markdown 管线把 `:image` 当成了图片短代码，
+   正文里的「og:image」变成「og<img>」—— 产物里多出一个缺 alt、缺 src 的空图片标签，
+   体检会报「图片缺 alt」。字段名一律放进反引号写。
+2. **中文文案里不要用直引号**：TS / 内联脚本里会截断字符串（本项目已踩三次），页面文案统一用「」。
+
+两处都只能**看构建产物**发现 —— 源文件里看起来完全正常。
