@@ -1,5 +1,10 @@
-@import "@toast-ui/editor/dist/toastui-editor.css";
-@import "@toast-ui/editor/dist/theme/toastui-editor-dark.css";
+/* ⚠️ 这两行曾把 TOAST UI 编辑器的整套样式（含 71.9KB 的单条图标雪碧图规则，
+   合计约 160KB）打进**全站**关键 CSS，但项目里没有任何地方 import @toast-ui/editor
+   的 JS，也没有渲染 .toastui-editor-* 的 DOM —— 纯属上游模板遗留的死代码。
+   删掉后首页 CSS 从 282KB 降到约 120KB，首屏 FOUC 与 CLS 明显改善。
+   真要用编辑器时，请在该组件内单独 `import "@toast-ui/editor/dist/toastui-editor.css"`。 */
+/* @import "@toast-ui/editor/dist/toastui-editor.css"; */
+/* @import "@toast-ui/editor/dist/theme/toastui-editor-dark.css"; */
 
 @tailwind components;
 
