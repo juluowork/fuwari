@@ -90,7 +90,10 @@ const sanitizeKeyword = () => {
 // Fetch posts from search.json
 async function fetchPosts(): Promise<PostData[]> {
 	try {
-		const response = await fetch("/search.json", { cache: "no-store" });
+		// 不要用 no-store：索引约 81 KB，每次打开搜索都重新下载太浪费。
+		// 服务端给的是 max-age=0, must-revalidate + ETag，浏览器会带 If-None-Match 走 304，
+		// 未变更时只回几百字节。索引没有内容哈希，所以也不能用 force-cache（会读到旧索引）。
+		const response = await fetch("/search.json", { cache: "default" });
 		if (!response.ok) {
 			throw new Error("Failed to fetch posts");
 		}
