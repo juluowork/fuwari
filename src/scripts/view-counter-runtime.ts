@@ -319,9 +319,13 @@ async function loadViews() {
 	// 2. Umami 没覆盖到的部分（含全站数字）才去问自建接口
 	//    ⚠️ 口径提醒：Umami 的「全站」是所有路径的 PV 合计，自建那边的 `/` 只是首页 PV。
 	//    所以 Umami 挂掉时侧栏这个数会明显变小（不是算错，是换了口径），这是有意的降级。
-	const missing = paths.filter(
-		(pathname) => umami?.paths[pathname] === undefined,
-	);
+	//    ⚠️ 另一个坑：新文章刚发布时 Umami 那条路径**存在但为 0**（不是"没有记录"），
+	//    只判断 `undefined` 会让自建侧的已有浏览数被 0 盖住 —— 卡片上一直显示「0 次」。
+	//    所以「Umami 为 0」也算缺口，交给自建补。
+	const missing = paths.filter((pathname) => {
+		const fromUmami = umami?.paths[pathname];
+		return fromUmami === undefined || fromUmami === 0;
+	});
 	const selfHosted =
 		umami?.site === undefined || missing.length > 0
 			? await loadFromSelfHosted([
@@ -335,7 +339,12 @@ async function loadViews() {
 		setSiteViews(selfHosted[SITE_PATHNAME]);
 	}
 
-	const all: ViewsMap = { ...(selfHosted ?? {}), ...(umami?.paths ?? {}) };
+	// 3. 合并渲染：Umami 优先，自建只补缺口。
+	//    但「Umami 为 0 而自建有数」时用自建的数，否则新文章会一直是 0。
+	const all: ViewsMap = { ...(selfHosted ?? {}) };
+	for (const [pathname, views] of Object.entries(umami?.paths ?? {})) {
+		if (views > 0 || all[pathname] === undefined) all[pathname] = views;
+	}
 
 	const posts: ViewsMap = {};
 	for (const slug of slugs) {
