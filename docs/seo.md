@@ -70,3 +70,39 @@ $py = "C:\Users\juluo\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\python\
 - 两篇早期演示文章（`hello-world`、`demo-private-note`）描述偏短（40 / 49 字）
 - `/tools/` 与 6 个工具页可再补 200~400 字实质说明（部分仍偏薄）
 - `sitemap-1.xml` 是排查 sitemap 问题时留的备用路径，用不上了可以删
+
+## 六、性能（Core Web Vitals）基线
+
+体检脚本：`C:\Users\juluo\.dsh-tools\shots\perf-home.mjs`
+
+```powershell
+$node = (Get-Command node).Source
+& $node C:\Users\juluo\.dsh-tools\shots\perf-home.mjs https://blog.peroe.cn/ --cpu 4 --runs 2 --noproxy
+```
+
+`--cpu 4` 把 CPU 降速 4 倍，脚本内部把网络限到 1.6Mbps / 150ms，采集 FCP / LCP / CLS / 长任务 /
+字节数 / LCP 元素。**必须同时降网速和降 CPU**，只降一个会得出误导性结论；
+`--noproxy` 用于绕开本机 FlClash（否则代理抖动会直接超时）。
+
+### 2026-10-24 基线（优化后，4× CPU + 1.6Mbps）
+
+| 指标 | 值 | 目标 |
+| --- | --- | --- |
+| FCP / LCP | 2.1~2.8 s | < 1.8 / < 2.5 s |
+| CLS | **0.43** | < 0.1 |
+| 长任务 | 2~3 个 / 134~204 ms | < 200 ms |
+| 头像 + favicon | 59 KB（原 215 KB） | — |
+
+已完成：埋点延后到 `requestIdleCallback`、头像 srcset（spec=140/640）、favicon 换 spec=140、
+KaTeX/Prism 样式移出全站关键 CSS（311.8KB → 282KB）。
+
+### ⏳ 下一轮：把 CLS 压到 0.1 以下
+
+根因已定位：**关键 CSS 仍有 282 KB**，1.6Mbps 下要一秒多才到，浏览器先用无样式盒子排版再重排，
+侧栏位移 300~500px。对照实验：**关掉 JS 后位移依旧存在**，证明与脚本无关。
+
+三条候选路线（改动样式有回归风险，需逐条验证）：
+
+1. 查清 Tailwind 为什么打出 282 KB（正常站点 30~50 KB），裁掉冗余工具类；
+2. 用 `build.inlineStylesheets` 内联首屏关键 CSS；
+3. `fancybox.css`（32.4 KB）这类「点开图片才用」的样式改成 `media="print"` + onload 切换。
