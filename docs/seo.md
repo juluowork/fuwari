@@ -86,23 +86,37 @@ $node = (Get-Command node).Source
 
 ### 2026-10-24 基线（优化后，4× CPU + 1.6Mbps）
 
-| 指标 | 值 | 目标 |
-| --- | --- | --- |
-| FCP / LCP | 2.1~2.8 s | < 1.8 / < 2.5 s |
-| CLS | **0.43** | < 0.1 |
-| 长任务 | 2~3 个 / 134~204 ms | < 200 ms |
-| 头像 + favicon | 59 KB（原 215 KB） | — |
+| 指标 | 第一轮后 | 第二轮后 | 目标 |
+| --- | --- | --- | --- |
+| FCP / LCP | 2.1~2.8 s | 1.9~3.9 s / 2.2~4.2 s | < 1.8 / < 2.5 s |
+| CLS | 0.43 | **0.29~0.41（偶发 0）** | < 0.1 |
+| 长任务 | 2~3 个 / 134~204 ms | 1~2 个 / 52~224 ms | < 200 ms |
+| 首页关键 CSS | 282 KB | **104 KB + fancybox 32.4 KB** | — |
+| 头像 + favicon | 59 KB | 59 KB | — |
 
 已完成：埋点延后到 `requestIdleCallback`、头像 srcset（spec=140/640）、favicon 换 spec=140、
 KaTeX/Prism 样式移出全站关键 CSS（311.8KB → 282KB）。
+
+### 第二轮已完成（2026-10-24）
+
+- **关键 CSS 282 KB → 104 KB**：其中约 160 KB 是 TOAST UI 编辑器的死样式
+  （`src/styles/main.css` 里的两个 `@import`，项目里没有任何地方 import 它的 JS、也没有渲染它的 DOM；
+  最夸张的一条规则 `.toastui-editor-toolbar-icons` 单独就有 71.9 KB 的 base64 图标雪碧图）。
+- **KaTeX / Prism 移出全站 CSS**（上一轮）→ 再 −30 KB。
+- **fancybox 改为按需动态 import**：没有可放大图片的页面不再加载它的 JS
+  （实测文章页点图仍能开灯箱，chunk 名为 `fancybox.*.js`）。
+  注意：它的 CSS 仍被 Astro 挂进共享 chunk（32.4 KB），这块**尚未解决**。
 
 ### ⏳ 下一轮：把 CLS 压到 0.1 以下
 
 根因已定位：**关键 CSS 仍有 282 KB**，1.6Mbps 下要一秒多才到，浏览器先用无样式盒子排版再重排，
 侧栏位移 300~500px。对照实验：**关掉 JS 后位移依旧存在**，证明与脚本无关。
 
-三条候选路线（改动样式有回归风险，需逐条验证）：
+现在剩下 104 KB，大头是正文排版（`.custom-md` 15.8 KB、`.prose` 12 KB）与全局链接样式（`a` 13.3 KB），
+继续砍就要动视觉。三条候选路线：
 
-1. 查清 Tailwind 为什么打出 282 KB（正常站点 30~50 KB），裁掉冗余工具类；
-2. 用 `build.inlineStylesheets` 内联首屏关键 CSS；
-3. `fancybox.css`（32.4 KB）这类「点开图片才用」的样式改成 `media="print"` + onload 切换。
+1. **内联首屏关键 CSS**（`build.inlineStylesheets`，阈值需自己调大），让首帧即最终布局；
+2. 把 `fancybox.css` 从共享 chunk 摘出去（`media="print"` + onload，或并入它的 JS chunk）；
+3. 给侧栏加 `contain: layout paint`，把它与主内容的重排隔离。
+
+现状判断：CLS 已从「必然发生」变成「慢网下偶发」，但要稳定 < 0.1 仍需上述其一。
