@@ -98,7 +98,7 @@
 | 52 | 图片格式的收益边界：PNG → WebP → AVIF 到底省了多少字节 | 已写 |
 | 45 | 个人博客的图片策略：进仓库、对象存储、图床三种方案的成本与手感 | 高 |
 | 51 | Core Web Vitals 到底谁说了算：Lighthouse / PageSpeed / CrUX 为什么不一样 | 高 |
-| 53 | 缓存策略的取舍：Cache-Control、ETag、边缘缓存叠在一起时谁生效 | 高 |
+| 53 | 缓存策略的取舍：Cache-Control、ETag、边缘缓存叠在一起时谁生效 | 已写 |
 | 47 | 博客 SEO 的自我体检：sitemap、RSS、结构化数据与站长验证 | 已写 |
 
 ### 网络排障与测量
