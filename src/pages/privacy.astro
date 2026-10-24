@@ -51,7 +51,9 @@ const breadcrumbSchema = {
 				<li><strong>访问统计（第三方）</strong>：本站默认加载 <a href="https://analytics.google.com" target="_blank" rel="noopener noreferrer">Google Analytics 4</a> 与 <a href="https://clarity.microsoft.com" target="_blank" rel="noopener noreferrer">Microsoft Clarity</a>（与必要的 Cookie 一样随页面加载）。GA 用于统计访问量与来源，会写入 <code>_ga</code> 一类 Cookie；Clarity 用于分析页面交互（点击、滚动与热图，可能包含匿名化的会话回放），会写入 <code>_clck</code> 一类 Cookie。**你可以随时打开 Cookie 偏好中心，把「追蹤」或「定位和廣告」类别关掉**——关掉后本站会立即下发停用信号（GA 的 <code>ga-disable</code> 与 Clarity 的 <code>consent(false)</code>），并在此后的访问中不再加载这两个脚本。相关数据分别由 Google 与 Microsoft 按其隐私政策处理。</li>
 				<li><strong>评论</strong>：文章评论由 <a href="https://giscus.app" target="_blank" rel="noopener noreferrer">Giscus</a> 提供，内容存储在 GitHub Discussions。使用评论需要登录 GitHub，你的头像与用户名会随评论展示，相关数据受 <a href="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener noreferrer">GitHub 隐私声明</a>约束。</li>
 				<li><strong>服务器日志</strong>：本站部署在 Cloudflare 上，访问时会产生常规访问日志（IP、时间、请求路径等），用于安全防护与故障排查。</li>
-				<li><strong>头像与图片</strong>：个人头像等静态资源可能由第三方图床（如 QQ 头像服务）提供，加载时会向对应服务发起请求。</li>
+								<li><strong>Cloudflare Web Analytics（RUM）</strong>：本站由 Cloudflare 提供 CDN，其“Web 分析”功能会注入一个很小的 <code>beacon.min.js</code>（<code>static.cloudflareinsights.com</code>）用于统计页面性能。它不使用 Cookie，但会向 Cloudflare 发送页面地址、加载耗时与浏览器信息。</li>
+				<li><strong>Cookie 同意横幅</strong>：横幅脚本由 <a href="https://www.termsfeed.com" target="_blank" rel="noopener noreferrer">TermsFeed</a> 提供（<code>www.termsfeed.com</code>），用于展示同意选项并记住你的选择（<code>cookie_consent_level</code>）。</li>
+				<li><strong>头像</strong>：侧栏头像取自 QQ 头像服务（<code>q2.qlogo.cn</code>），加载时会向腾讯的服务器发起请求；文章配图则随站点构建分发，不经过任何外部图床。</li>
 			</ul>
 
 			<h2>二、Cookie 与同意</h2>
