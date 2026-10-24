@@ -236,3 +236,5 @@ async function initFancybox() {
 但真正修好它只花了一个 div 的位置调整。**先量清楚，再动手。**
 
 缓存层是同一套思路的另一半：[三层缓存各自为政](/posts/blog-cache-layers/)里解释了为什么哈希资源要永久缓存；改样式踩的坑则记在 [Astro 的三个隐形约定](/posts/blog-astro-traps/)。
+
+另外把「部署体积」和「访客成本」分开量了一遍：`dist` 16 MB，但首页压缩后只传 28 KB，见[构建产物 16 MB，访客每次只下 28 KB](/posts/blog-build-size/)。

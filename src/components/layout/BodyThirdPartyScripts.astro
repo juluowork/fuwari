@@ -25,10 +25,7 @@ const clarityId = analyticsConfig.enable ? (analyticsConfig.clarityProjectId ?? 
 		script.async = true;
 		document.head.appendChild(script);
 	};
-	// ⚠️ 曾经等 window.load 之后再加载横幅，结果它在 12s 才出现 ——
-	// LCP 会一直记到用户首次交互，于是这个「晚出现的大块文案」顶替真实内容成了 LCP 元素
-	// （Lighthouse 实测 LCP 元素 = p.cc-nb-text）。改成 DOMContentLoaded 后横幅更早出现，
-	// 不再把 LCP 拖到十几秒。
+	// DOMContentLoaded 就加载：等 load 会让横幅 12s 才出现、顶替 LCP（12.1s → 7.2s）。
 	if (document.readyState !== "loading") {
 		load();
 		return;
@@ -49,15 +46,10 @@ const clarityId = analyticsConfig.enable ? (analyticsConfig.clarityProjectId ?? 
 
 	const baseConfig = {
 		notice_banner_type: "simple",
-		// ⚠️ express = 必须主动同意（功能性/追踪/广告默认全关）；
-		//    implied = 默认同意 / opt-out（必要的永远开，功能性/追踪/广告默认开着，
-		//    访客可以在偏好中心里手动关掉）。
+		// implied = opt-out（默认同意）。详见 docs/seo.md「Cookie 同意」一节。
 		consent_type: "implied",
 		language: cookieConsentConfig.language || "en",
-		// ⚠️ 这个列表同时决定「哪些类别算默认已接受」：implied 模式下库会把列在这里的类别
-		//    标记为 accepted（cookie 里写 true、偏好中心开关预勾选）。本站的统计脚本确实是
-		//    页面加载就跑（不等待同意），所以四个类别全列 —— 只列 strictly-necessary 的话，
-		//    访客打开偏好中心会看到功能性/追踪/广告全是关的，与「默认开启」的定位不符。
+		// 这个列表同时决定「哪些类别算默认已接受」，四个都列以匹配「默认开启」的定位。
 		page_load_consent_levels: [
 			"strictly-necessary",
 			"functionality",
@@ -72,10 +64,7 @@ const clarityId = analyticsConfig.enable ? (analyticsConfig.clarityProjectId ?? 
 		open_preferences_center_selector: "#open_preferences_center",
 	};
 
-	// 让横幅在手机上变成紧凑条（类名见官方 API 文档：.termsfeed-com---nb / .cc-nb-title /
-	// .cc-nb-text / .cc-nb-buttons）。原因：默认样式下它约 360x490，比页面上任何正文块都大，
-	// 又是最后才出现的元素，于是成了 LCP —— 实测 LCP 元素就是 p.cc-nb-text。
-	// 压缩后「完整说明」仍可点「更改我的偏好」查看，所以披露并没有减少。
+	// 紧凑横幅：默认 360x490 比正文大且最晚出现，会顶替 LCP；→ 320x137（详见 docs/baseline.md）。
 	const COMPACT_BANNER_CSS = `
 		@media (max-width: 767px) {
 			.termsfeed-com---nb { max-width: 320px !important; }
