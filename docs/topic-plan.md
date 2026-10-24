@@ -75,7 +75,7 @@
 ### Docker 与自建服务
 | # | 选题 | 可行性 |
 | --- | --- | --- |
-| 34 | 自建统计 vs 第三方统计：Umami、CF Analytics、百度、GA 实测对比 | 高 |
+| 34 | 自建统计 vs 第三方统计：Umami、CF Analytics、百度、GA 实测对比 | 已写 |
 | 35 | 我为什么把访问统计从 Umami Cloud 搬回自己的 Worker + D1 | 高 |
 | 36 | 自建服务选型避坑：「部署成功后再也没打开过」的项目有什么共同点 | 中 |
 | 33 | Docker Compose 写对了能省多少事：从裸跑命令到 compose.yaml 的重构 | 中 |
