@@ -1,4 +1,10 @@
 ---
+// 公式与代码块的样式只在文章页引入（从 Layout.astro 移过来）：
+// 放在全局布局里会让每个页面都下载 300KB+ 的关键 CSS，首屏直接 FOUC。
+import "katex/dist/katex.min.css";
+import "prismjs/themes/prism-tomorrow.css";
+import "../../styles/prism-custom.css";
+
 import path from "node:path";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";

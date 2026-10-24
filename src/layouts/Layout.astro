@@ -1,10 +1,9 @@
 ---
-import "prismjs/themes/prism-tomorrow.css";
-// KaTeX 样式随构建打包（原来走 cdn.jsdelivr.net，国内可达性不稳定）
-import "katex/dist/katex.min.css";
-
+// ⚠️ KaTeX 与 Prism 的样式只在文章页需要（正文里的公式与代码块），
+// 之前放在这里会被打进**全站**的关键 CSS —— 实测那个 CSS 因此涨到 311.8KB，
+// 在 1.6Mbps 下要 1.6 秒才到，首屏出现明显 FOUC 并造成 CLS。
+// 现在移到 src/pages/posts/[...slug].astro 单独引入，首页不再为它们付流量。
 import "../styles/variables.styl";
-import "../styles/prism-custom.css";
 import "../styles/main.css";
 import "../styles/markdown.css";
 import "../styles/markdown-extend.styl";

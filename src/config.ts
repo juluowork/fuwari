@@ -28,6 +28,9 @@ const customDomain = `${blogSubdomain}.${rootDomain}`;
 // 个人 QQ（头像与联系入口都由它推导，换号只需改这一处）
 const qqNumber = "1576586736";
 const qqAvatar = `https://q2.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=0`;
+// favicon 用同一张图的小尺寸版本：spec=0 是原图（实测 106.8KB），而浏览器会积极请求 favicon，
+// 等于每个访客白下 100KB；spec=140 只有 6.2KB，缩到 16/32px 依然清晰。
+const qqAvatarSmall = `https://q2.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=140`;
 
 // 联系邮箱：**写死**，不要跟着 rootDomain 变 ——
 // peroe.cn 没有 MX 记录（邮箱在 juluo.work 上，route1-3.mx.cloudflare.net），
@@ -84,7 +87,7 @@ export const siteConfig: SiteConfig = {
 	favicon: [
 		// Leave this array empty to use the default favicon
 		{
-			src: qqAvatar, // Path of the favicon, relative to the /public directory
+			src: qqAvatarSmall, // Path of the favicon, relative to the /public directory
 			//   sizes: '32x32',              // (Optional) Size of the favicon, set only if you have favicons of different sizes
 		},
 	],
