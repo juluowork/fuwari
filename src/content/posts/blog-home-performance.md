@@ -1,7 +1,7 @@
 ---
 title: 首屏从 392KB 砍到 59KB，FCP 从 7.4 秒到 2.1 秒
 published: 2026-10-24 17:45:00 +08:00
-updated: 2026-10-24 17:45:00 +08:00
+updated: 2026-10-24 17:55:00 +08:00
 description: 用 CDP 模拟中端手机实测博客首页：GA4 与 Clarity 挤在关键路径、头像和 favicon 直接加载 107KB 原图、312KB 关键 CSS 拖慢首屏。四处改动后传输 392KB→59KB，FCP 7.4s→2.1s，长任务 13→2 个。
 tags:
   - 建站
@@ -12,6 +12,10 @@ pinned: false
 lang: ""
 draft: false
 ---
+
+> [!TIP]
+> 2026-10-24 补充：写完这篇之后又做了第二轮 —— 从关键 CSS 里挖出 **160KB 的编辑器死代码**，
+> 首页 CSS 从 282KB 降到 104KB，CLS 也从 0.43 降到 0.29~0.39。详见文末「第二轮」一节。
 
 上一轮做完 [SEO 自我体检](/posts/blog-seo-self-audit/)，顺手用同样的思路量了一次首屏：**FCP 7.4 秒、LCP 43 秒、CLS 0.5**，而且 LCP 元素居然是 Cookie 横幅的文案 —— 说明打开页面那几秒里，浏览器的注意力全被别的请求抢走了。
 
@@ -123,19 +127,60 @@ const avatarSrcSet = config.avatar.includes("spec=0")
 
 ![手机宽度下的首页：侧栏头像与列表都在，视觉上没有任何变化](/assets/images/posts/blog-home-performance/03-home-mobile.webp)
 
-## 还没解决的：CLS 0.43
+## 第二轮：282 KB 里有 160 KB 是死代码
 
-诚实说，**布局偏移没修好**。改造后 CLS 从 0.50~0.70 降到 0.43，但仍然远高于 0.1 的「良好」线。
+既然 CLS 卡在关键 CSS 上，下一步就是把它拆小。我写了个脚本按选择器前缀统计这 282 KB 的构成，结果很意外：
 
-我做了个对照实验：把 JS 整个关掉，内容区高度依然会从 2507px 变到 1256px —— 说明这不是脚本改 DOM 造成的，而是**样式表来得太晚**：在 1.6Mbps 下，282KB 的关键 CSS 要一秒多才到，浏览器先用"无样式"的盒子排了一遍版，等 CSS 到了再重排，侧栏就被整体推动了 300~500px。
+```
+103.0 KB  (36.6%)  .toastui-editor-toolbar-
+ 32.9 KB  (11.7%)  .toastui-editor-context-
+ 15.8 KB  ( 5.6%)  .custom-md
+ 12.0 KB  ( 4.3%)  .prose
+```
 
-也就是说，只要关键 CSS 还有 282KB，慢网下的 CLS 就压不下去。下一步有三条路，我还没动手：
+**TOAST UI 编辑器的样式占了 160 多 KB**，其中最夸张的一条规则：
 
-1. **裁 Tailwind 体积**：282KB 里绝大部分是工具类，得查清为什么打出来这么多（正常博客站点 30~50KB 就够）；
-2. **内联首屏关键 CSS**：Astro 支持 `build.inlineStylesheets`，但阈值默认很小，需要自己拆；
-3. **延迟非关键样式**：把 `fancybox.css`（32.4KB）这类只在点开图片时才用的样式改成 `media="print"` + `onload` 切换。
+```css
+.toastui-editor-toolbar-icons,
+.toastui-editor-context-menu span:before { ... }   /* 71.9 KB */
+```
 
-这几条都有把样式改坏的风险，所以这轮先停在"能稳定复现、收益明确"的四个改动上。
+那是把整套工具栏图标以 base64 内联成的雪碧图。问题是：这个站**根本没有编辑器** —— 没有任何代码 `import "@toast-ui/editor"` 的 JS，也没有任何组件渲染 `.toastui-editor-*` 的 DOM。它只是上游模板留在 `src/styles/main.css` 开头的两个 `@import`：
+
+```diff
+-@import "@toast-ui/editor/dist/toastui-editor.css";
+-@import "@toast-ui/editor/dist/theme/toastui-editor-dark.css";
+```
+
+删掉之后，首页关键 CSS **282 KB → 104 KB**（−63%）。
+
+顺手又处理了另一块：`fancybox.css`（32.4 KB）只有「点开文章图片」时才用得上，但 Layout 里那段脚本静态 import 了它，于是每个页面都吃一份。改成按需动态 import：
+
+```ts
+async function initFancybox() {
+    if (!document.querySelector(".custom-md img, #post-cover img")) return;  // 没图片的页面直接返回
+    const { bindFancybox, cleanupFancybox } = await import("@utils/fancybox");
+    cleanupFancybox();
+    bindFancybox(".custom-md img, #post-cover img");
+}
+```
+
+现在 fancybox 的 JS 变成独立 chunk，只有文章页点图片时才下载（lightbox 行为实测未受影响）；它的 CSS 仍被 Astro 挂在共享 chunk 上，这块还没解决。
+
+## 还没解决的：CLS
+
+两轮下来 CLS 从 **0.50~0.70 降到 0.29~0.39**，并且出现过 0.000 的一轮 —— 说明它是**竞态**：网络快的时候一次都不位移，慢的时候侧栏会被上方内容顶动 600 多像素。
+
+对照实验帮我锁定了性质：把 JS 整个关掉，内容区高度依然会变化 —— 不是脚本改 DOM，而是**样式表到得晚会触发一次重排**。两次时间点截图（0.9 秒空白 / 1.6 秒完整）也确认没有可见的 FOUC，所以剩下的位移发生在"样式已到、但图片/字体度量还在补"的窗口里。
+
+现在还剩下的 CSS 是 104 KB，大头是正文排版（`.custom-md` 15.8 KB、`.prose` 12 KB）和全局链接样式（`a` 13.3 KB），属于"真要用到"的部分，继续砍就得动视觉。所以下一轮我打算换思路：
+
+1. **内联首屏关键 CSS**（Astro 的 `build.inlineStylesheets`，阈值要自己调大），让首帧就是最终布局；
+2. 把 `fancybox.css` 从共享 chunk 里摘出去（改成 `media="print"` + `onload` 或内联到它的 JS chunk）；
+3. 给侧栏区块加 `contain: layout paint`，把它和主内容的重排隔离开。
+
+诚实地说：**这一轮没有把 CLS 压到 0.1**，只把它从"必然发生"变成"慢网下偶发"。
+
 
 ## 小结
 
