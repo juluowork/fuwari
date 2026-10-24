@@ -87,6 +87,19 @@ const breadcrumbSchema = {
 		},
 	],
 };
+// JSON-LD：让搜索引擎知道这是一个可以直接使用的免费 Web 应用（结构化数据）
+const toolJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: "文件索引",
+	url: new URL("/tools/files/", Astro.site).toString(),
+	applicationCategory: "UtilitiesApplication",
+	operatingSystem: "Any",
+	browserRequirements: "需要支持 ES2020 的现代浏览器",
+	offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" },
+	description: "站内公开文件列表：收录文章中提到的示例文件与工具产物，随仓库构建并由 CDN 直接分发。",
+};
+
 ---
 
 <MainGridLayout
@@ -192,6 +205,7 @@ const breadcrumbSchema = {
             </ul>
         </section>
     </div>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(toolJsonLd)}></script>
 </MainGridLayout>
 
 <style>

@@ -68,6 +68,21 @@ const extractDomains = async () => {
 };
 
 const domains = await extractDomains();
+// 诊断页的结构化数据：告诉搜索引擎这是一份"本站点使用的外部域名清单"
+const domainJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "ItemList",
+	name: "本站使用的外部域名清单",
+	description: "列出博客源码里硬编码或引用的所有外部域名，以及它们分别负责什么。",
+	url: new URL("/domain/", Astro.site).toString(),
+	numberOfItems: domains.length,
+	itemListElement: domains.slice(0, 30).map((d, i) => ({
+		"@type": "ListItem",
+		position: i + 1,
+		name: String(d),
+	})),
+};
+
 ---
 
 <MainGridLayout
@@ -88,4 +103,5 @@ const domains = await extractDomains();
             </div>
         </div>
     </div>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(domainJsonLd)}></script>
 </MainGridLayout>

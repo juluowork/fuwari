@@ -1,7 +1,7 @@
 ---
 title: 关于本站
 published: 2026-10-05
-description: 这是本站的第一篇文章：介绍一下这个博客是做什么的、用了什么技术，以及怎么联系我。
+description: 这是本站的第一篇文章：介绍一下这个博客是做什么的、用了哪些技术（Astro 静态站 + Cloudflare Workers），文章怎么组织、评论怎么接，以及可以通过哪些方式联系我。
 tags:
   - 公告
 pinned: true

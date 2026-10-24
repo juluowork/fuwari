@@ -9,6 +9,19 @@ export const toolMeta = {
 import PageCardHeader from "@components/misc/PageCardHeader.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { randomImageConfig } from "@/config";
+// JSON-LD：让搜索引擎知道这是一个可以直接使用的免费 Web 应用（结构化数据）
+const toolJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: "图片画廊",
+	url: new URL("/tools/gallery/", Astro.site).toString(),
+	applicationCategory: "MultimediaApplication",
+	operatingSystem: "Any",
+	browserRequirements: "需要支持 ES2020 的现代浏览器",
+	offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" },
+	description: "图片画廊：随机浏览站内精选图片，支持横竖屏切换，图片随站点构建分发。",
+};
+
 ---
 
 <MainGridLayout
@@ -441,4 +454,5 @@ import { randomImageConfig } from "@/config";
 		if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initIfPresent);
 		else initIfPresent();
 	</script>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(toolJsonLd)}></script>
 </MainGridLayout>

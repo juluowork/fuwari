@@ -11,6 +11,19 @@ import LongLinkGenerator from "@components/LongLinkGenerator.svelte";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 const title = "长链生成器";
+// JSON-LD：让搜索引擎知道这是一个可以直接使用的免费 Web 应用（结构化数据）
+const toolJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: "长链生成器",
+	url: new URL("/tools/long-link/", Astro.site).toString(),
+	applicationCategory: "UtilitiesApplication",
+	operatingSystem: "Any",
+	browserRequirements: "需要支持 ES2020 的现代浏览器",
+	offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" },
+	description: "把普通网址转成由 i、I 等相似字符构成的超长链接，纯前端生成，可测试输入长度限制。",
+};
+
 ---
 
 <MainGridLayout
@@ -24,4 +37,34 @@ const title = "长链生成器";
 		</p>
 		<LongLinkGenerator client:load />
 	</div>
+		<!-- 可被爬取到的正文说明：工具本身是脚本渲染的，这页原来只有 252 字正文 -->
+	<section class="p-6 md:p-8 border-t border-white/10 text-sm leading-relaxed text-75 space-y-3">
+		<h2 class="text-lg font-bold text-90 mb-3">为什么需要「长链」</h2>
+		<p>
+			这不是给正常用途准备的工具。它把网址里的普通字符替换成视觉上几乎一样的
+			<code class="px-1 bg-black/20 rounded">i</code>、<code class="px-1 bg-black/20 rounded">I</code>、
+			<code class="px-1 bg-black/20 rounded">l</code>、<code class="px-1 bg-black/20 rounded">1</code>
+			等字符，长度翻好几倍但看起来没变 —— 典型用途是<strong class="text-90">测试</strong>：
+			输入框长度限制、URL 校验、数据库字段宽度、聊天软件的链接截断策略。
+		</p>
+		<p>
+			生成过程完全在本地：字符替换 + 复制到剪贴板，没有任何请求发出去。
+		</p>
+		<h2 class="text-lg font-bold text-90 mt-5 mb-3">常见问题</h2>
+		<dl class="space-y-3">
+			<div>
+				<dt class="font-bold text-90">生成的长链能正常访问吗？</dt>
+				<dd>不能。这些替换字符在 DNS 与 HTTP 层并不是原字符，服务端会 404 或直接拒绝。它只用于测试，不用于分享。</dd>
+			</div>
+			<div>
+				<dt class="font-bold text-90">为什么不用零宽字符？</dt>
+				<dd>零宽字符在多数地方会被静默丢弃或触发校验失败；这里用的是"看起来像"的可打印字符，更接近真实的长链接测试场景（零宽版本另有 <a href="/tools/s/" class="text-[var(--primary)]">零宽短链生成器</a>）。</dd>
+			</div>
+			<div>
+				<dt class="font-bold text-90">会不会被用来做坏事？</dt>
+				<dd>不会带来安全收益：链接打不开、也无法绕过鉴权。反过来它很适合用来验证"你的系统有没有正确规范化输入"。</dd>
+			</div>
+		</dl>
+	</section>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(toolJsonLd)}></script>
 </MainGridLayout>

@@ -12,6 +12,19 @@ import ShortLinkGenerator from "@components/ShortLinkGenerator.svelte";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 const title = "零宽短链生成器";
+// JSON-LD：让搜索引擎知道这是一个可以直接使用的免费 Web 应用（结构化数据）
+const toolJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: "零宽短链生成器",
+	url: new URL("/tools/s/", Astro.site).toString(),
+	applicationCategory: "UtilitiesApplication",
+	operatingSystem: "Any",
+	browserRequirements: "需要支持 ES2020 的现代浏览器",
+	offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" },
+	description: "零宽短链生成器：在链接里插入零宽字符，肉眼相同、字符数不同，适合测试去重与校验逻辑。",
+};
+
 ---
 
 <MainGridLayout
@@ -27,4 +40,5 @@ const title = "零宽短链生成器";
 		</p>
 		<ShortLinkGenerator client:load />
 	</div>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(toolJsonLd)}></script>
 </MainGridLayout>

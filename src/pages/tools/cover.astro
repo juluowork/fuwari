@@ -13,6 +13,19 @@ import { siteConfig } from "@/config";
 
 const title = "封面生成";
 const hue = siteConfig.themeColor.hue;
+// JSON-LD：让搜索引擎知道这是一个可以直接使用的免费 Web 应用（结构化数据）
+const toolJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: "封面生成器",
+	url: new URL("/tools/cover/", Astro.site).toString(),
+	applicationCategory: "DesignApplication",
+	operatingSystem: "Any",
+	browserRequirements: "需要支持 ES2020 的现代浏览器",
+	offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" },
+	description: "在线生成文章封面图：挑选背景、加上标题，一键导出 16:9 封面，全部在浏览器本地绘制。",
+};
+
 ---
 
 <MainGridLayout
@@ -23,4 +36,33 @@ const hue = siteConfig.themeColor.hue;
 		<PageCardHeader title={title} icon="material-symbols:image-rounded" pathname="/cover/" />
 		<CoverGenerator client:visible hue={hue} />
 	</div>
+		<!-- 可被爬取到的正文说明：工具本身是脚本渲染的，这页原来只有 292 字正文 -->
+	<section class="p-6 md:p-8 border-t border-white/10 text-sm leading-relaxed text-75 space-y-3">
+		<h2 class="text-lg font-bold text-90 mb-3">这个封面生成器适合什么场景</h2>
+		<p>
+			写完一篇文章，想给它配一张风格统一的题图，又不想为了一张图打开 Photoshop——这是最常见的场景。
+			选一张背景、填上标题与副标题，导出 1200×675（16:9）的 PNG，直接当文章封面或分享图即可。
+		</p>
+		<p>
+			所有绘制都在浏览器里完成：背景图用 <code class="px-1 bg-black/20 rounded">Canvas</code> 绘制，
+			文字用系统字体渲染，<strong class="text-90">不会把任何素材上传到服务器</strong>。
+			断网也能用，因为整个工具随页面一起加载。
+		</p>
+		<h2 class="text-lg font-bold text-90 mt-5 mb-3">常见问题</h2>
+		<dl class="space-y-3">
+			<div>
+				<dt class="font-bold text-90">导出的图片有多大？</dt>
+				<dd>取决于背景复杂度，通常 200~600 KB；纯色或渐变背景会小很多。需要更小体积可以在导出后走一遍图片压缩。</dd>
+			</div>
+			<div>
+				<dt class="font-bold text-90">能自定义字体吗？</dt>
+				<dd>用系统已装字体，不加载网络字体（为了断网可用与速度）。想用特定字体，可以先在本机装好再生成。</dd>
+			</div>
+			<div>
+				<dt class="font-bold text-90">为什么没有模板库？</dt>
+				<dd>刻意不做：模板一多就变成"选模板"的时间黑洞。这里只解决"快速出一张能用的图"，配色跟着站点主题走。</dd>
+			</div>
+		</dl>
+	</section>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(toolJsonLd)}></script>
 </MainGridLayout>

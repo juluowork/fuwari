@@ -28,6 +28,19 @@ const tools = Object.entries(toolPagesModules)
 	})
 	.filter((tool): tool is NonNullable<typeof tool> => tool !== null)
 	.sort((a, b) => a.order - b.order);
+// JSON-LD：让搜索引擎知道这是一个可以直接使用的免费 Web 应用（结构化数据）
+const toolJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: "peroe 的在线工具箱",
+	url: new URL("/tools/", Astro.site).toString(),
+	applicationCategory: "UtilitiesApplication",
+	operatingSystem: "Any",
+	browserRequirements: "需要支持 ES2020 的现代浏览器",
+	offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" },
+	description: "peroe 的博客在线工具箱：封面生成、图片画廊、幻影坦克、零宽短链等小工具，全部在浏览器本地运行。",
+};
+
 ---
 
 <MainGridLayout
@@ -62,4 +75,5 @@ const tools = Object.entries(toolPagesModules)
 			))}
 		</div>
 	</div>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(toolJsonLd)}></script>
 </MainGridLayout>
