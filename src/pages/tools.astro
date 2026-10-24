@@ -30,7 +30,10 @@ const tools = Object.entries(toolPagesModules)
 	.sort((a, b) => a.order - b.order);
 ---
 
-<MainGridLayout title="工具">
+<MainGridLayout
+	title="工具"
+	description="peroe 的博客在线工具箱：封面生成、图片画廊、幻影坦克、零宽短链等小工具，全部在浏览器本地运行，不上传数据、不需要登录。"
+>
 	<div class="p-6 md:p-8 border-b border-white/10">
 		<div class="flex items-center gap-2 mb-6">
 			<Icon name="material-symbols:build-circle-rounded" class="text-[var(--primary)] w-7 h-7" />

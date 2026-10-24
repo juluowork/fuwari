@@ -15,7 +15,10 @@ const title = "封面生成";
 const hue = siteConfig.themeColor.hue;
 ---
 
-<MainGridLayout title={title}>
+<MainGridLayout
+	title={title}
+	description="在线生成文章封面图：挑选背景、加上标题与副标题，一键导出色调统一的 16:9 封面图片。全部在浏览器本地绘制，不上传任何素材，也不需要登录。"
+>
 	<div class="p-6 md:p-8 border-b border-white/10">
 		<PageCardHeader title={title} icon="material-symbols:image-rounded" pathname="/cover/" />
 		<CoverGenerator client:visible hue={hue} />

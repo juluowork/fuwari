@@ -89,7 +89,10 @@ const breadcrumbSchema = {
 };
 ---
 
-<MainGridLayout title="文件">
+<MainGridLayout
+	title="文件"
+	description="站内公开文件列表：收录文章中提到的示例文件与工具产物，目录随仓库一起构建、由 CDN 直接分发，点开即可下载，不需要注册也不需要等待。"
+>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
     <div class="p-6 md:p-8 border-b border-white/10">
         <div class="flex items-center justify-between gap-3 flex-wrap mb-6">
@@ -169,6 +172,25 @@ const breadcrumbSchema = {
 
             setupTabs();
         </script>
+
+        <!-- 可被爬到的正文说明：列表本身由脚本渲染，这页原来只有 166 字正文 -->
+        <section class="mt-8 pt-6 border-t border-white/10 text-sm leading-relaxed text-white/70 space-y-3">
+            <h2 class="text-lg font-bold text-white mb-2">这些文件是什么</h2>
+            <p>
+                站内公开资源都放在 <code class="px-1 bg-black/20 rounded">public/files/</code> 目录里，随仓库一起构建、
+                跟页面同一个 CDN 分发 —— 所以下载不经过任何第三方网盘，也不会有"分享链接过期"的问题。
+            </p>
+            <p>
+                目前收录的是文章里提到的示例文件、工具页面产生的模板，以及一些常被问到的配置文件。
+                每新增一批会顺手写进对应文章，方便对照着看，而不是只丢一个下载链接。
+            </p>
+            <h2 class="text-lg font-bold text-white mt-5 mb-2">下载前请注意</h2>
+            <ul class="list-disc pl-5 space-y-1">
+                <li>文件内容与安全性请自行核实，本站不做担保；压缩包建议先在沙箱或虚拟机里解开。</li>
+                <li>目录会随文章更新而调整，旧的直链可能失效 —— 失效时从对应文章正文里找最新入口。</li>
+                <li>如果某个文件对你有用但已经下架，可以直接在文章评论区说一声。</li>
+            </ul>
+        </section>
     </div>
 </MainGridLayout>
 

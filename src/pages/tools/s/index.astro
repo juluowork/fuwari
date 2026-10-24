@@ -14,7 +14,10 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 const title = "零宽短链生成器";
 ---
 
-<MainGridLayout title={title}>
+<MainGridLayout
+	title={title}
+	description="零宽短链生成器：在网址里插入零宽字符，肉眼看起来完全相同、字符数却成倍不同。适合测试链接唯一性、去重逻辑与输入长度校验，全部在浏览器本地生成。"
+>
 	<!-- 页面内容 -->
 	<div class="p-6 md:p-8 border-b border-white/10">
 		<PageCardHeader title={title} icon="material-symbols:link-rounded" pathname="/s/" />

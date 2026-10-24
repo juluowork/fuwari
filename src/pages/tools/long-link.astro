@@ -13,7 +13,10 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 const title = "长链生成器";
 ---
 
-<MainGridLayout title={title}>
+<MainGridLayout
+	title={title}
+	description="把普通网址转成由 i、I 等相似字符构成的超长链接：看起来一模一样，长度却翻很多倍，纯前端生成，可用来测试输入长度限制。"
+>
 	<div id="page-content" class="p-6 md:p-8 border-b border-white/10">
 		<PageCardHeader title={title} icon="material-symbols:link-rounded" pathname="/long-link/" />
 		<p class="mb-6 text-sm leading-relaxed text-50">

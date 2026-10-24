@@ -127,8 +127,8 @@ const jsonLd = [
             </div>
             )}
 
-            <!-- title -->
-            <div class="relative">                <div
+            <!-- title（h1：文章标题就是本页的主标题；原来用的是 div，全站文章页 h1 数量为 0） -->
+            <div class="relative">                <h1
                     id="post-title"
                     data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
                     class="w-full flex items-center font-bold mb-3
@@ -139,7 +139,7 @@ const jsonLd = [
                 ">
 
                     <span>{entry.data.title}</span>
-                </div>
+                </h1>
             </div>
 
             <!-- description/excerpt（加密文章只显示手写的 description，不输出正文 excerpt） -->

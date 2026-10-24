@@ -39,6 +39,12 @@ interface Props {
 
 let { title, banner, description, lang, setOGTypeArticle, ogImage } = Astro.props;
 
+// 分享图：文章自带封面就用它，否则回落到站点默认图（public/og-default.png，1200x630）。
+// 之前只在传了 ogImage 时才输出 og:image，而文章 frontmatter 里普遍没有 image 字段，
+// 结果全站 28 个页面都没有 og:image —— 分享到群/社交平台时全是纯文字卡片。
+const resolvedOgImage = new URL(ogImage || "/og-default.png", Astro.site).toString();
+const usingDefaultOgImage = !ogImage;
+
 // apply a class to the body element to decide the height of the banner, only used for initial page load
 const isHomePage = pathsEqual(Astro.url.pathname, url("/"));
 
@@ -127,14 +133,20 @@ const bannerOffset =
         ) : (
         <meta property="og:type" content="website" />
         )}
-		{ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site).toString()} />}
-		{ogImage && <meta property="og:image:alt" content={pageTitle} />}
+		<meta property="og:image" content={resolvedOgImage} />
+		<meta property="og:image:alt" content={pageTitle} />
+		{usingDefaultOgImage && (
+			<>
+				<meta property="og:image:width" content="1200" />
+				<meta property="og:image:height" content="630" />
+			</>
+		)}
 
 		<meta name="twitter:card" content="summary_large_image">
 		<meta property="twitter:url" content={Astro.url}>
 		<meta name="twitter:title" content={pageTitle}>
 		<meta name="twitter:description" content={description}>
-		{ogImage && <meta name="twitter:image" content={new URL(ogImage, Astro.site).toString()} />}
+		<meta name="twitter:image" content={resolvedOgImage} />
 
 		<meta name="generator" content={Astro.generator} />
         <link rel="preconnect" href={umamiConfig.baseUrl} />

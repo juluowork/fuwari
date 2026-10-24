@@ -32,7 +32,10 @@ const breadcrumbSchema = {
 };
 ---
 
-<MainGridLayout title="友链">
+<MainGridLayout
+	title="友链"
+	description="peroe 的友情链接：一些长期在写、内容靠谱的个人博客与技术站点。欢迎交换友链 —— 只要你在自己站上放了本站入口，就可以来谈谈互相加链接。"
+>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
     <div class="p-6 md:p-8 border-b border-white/10">
         <div class="flex items-center gap-2 mb-6">

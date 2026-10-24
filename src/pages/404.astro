@@ -1,12 +1,15 @@
 ---
-import { siteConfig } from "@/config";
-import Layout from "@/layouts/Layout.astro";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
 import Icon from "@components/Icon.astro";
 ---
 
-<Layout title="页面未找到">
-	<MainGridLayout>
+<!-- 注意：不要在外面再套一层 Layout。MainGridLayout 内部已经包含 Layout，
+     重复嵌套会让 404 页输出两份 head、两个 title、两段 description。 -->
+<MainGridLayout
+	title="页面不存在"
+	description="这个地址没有对应的页面。可能是链接过期、文章被移动，或者手动输入时有笔误 —— 可以回到首页，或者从文章归档里重新找到你想看的内容。"
+>
+	<meta slot="head" name="robots" content="noindex" />
 		<div class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
 			<!-- 404 图标 -->
 			<div class="mb-8">
@@ -53,4 +56,3 @@ import Icon from "@components/Icon.astro";
 			</div>
 		</div>
 	</MainGridLayout>
-</Layout>

@@ -13,7 +13,10 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 const title = "光棱坦克 / 幻影坦克图片工具";
 ---
 
-<MainGridLayout title={title}>
+<MainGridLayout
+	title={title}
+	description="光棱坦克 / 幻影坦克图片生成器：把两张图合成一张，白底显示其中一张、黑底显示另一张，用本地 Canvas 合成，文件不外传。"
+>
 	<div class="p-6 md:p-8 border-b border-white/10">
 		<PageCardHeader title={title} icon="material-symbols:layers-rounded" pathname="/phantom-tank/" />
 		<p class="mb-6 text-sm leading-relaxed text-50">

@@ -70,7 +70,10 @@ const extractDomains = async () => {
 const domains = await extractDomains();
 ---
 
-<MainGridLayout title="项目中使用的域名列表" description="列出项目中所有硬编码或引用的外部域名">
+<MainGridLayout
+	title="项目中使用的域名列表"
+	description="列出本站源码里所有硬编码或引用的外部域名，方便自查页面加载时会请求哪些第三方服务、每个域名各自负责什么，也是审查隐私与可达性的快速入口。"
+>
     <div class="flex w-full overflow-hidden relative min-h-32">
         <div class="z-10 px-9 py-6 relative w-full border-b border-white/10">
             <h1 class="text-2xl font-bold mb-4 text-[var(--primary)]">项目中使用的域名列表</h1>

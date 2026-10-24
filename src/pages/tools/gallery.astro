@@ -11,7 +11,10 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { randomImageConfig } from "@/config";
 ---
 
-<MainGridLayout title="画廊">
+<MainGridLayout
+	title="画廊"
+	description="图片画廊：随机浏览站内精选图片，支持横竖屏与不同尺寸自适应，可一键切换尺寸查看原图。所有图片随站点构建分发，不依赖外部图床，加载稳定不跑图。"
+>
 	<div class="p-6 md:p-8 border-b border-white/10">
 		<PageCardHeader title="画廊" icon="material-symbols:photo-library-rounded" pathname="/gallery/">
 			<div slot="title-extra" id="status" class="text-sm font-bold text-50 transition-all"></div>
@@ -33,6 +36,37 @@ import { randomImageConfig } from "@/config";
 		<div id="gallery" class="gallery-grid" data-ready="false"></div>
 		<div id="footer-status" class="text-center text-sm text-50 h-10 mt-4"></div>
 		<div id="sentinel" class="h-4"></div>
+
+		<!-- 可被爬到的正文说明（上面那块网格是 JS 填的，爬虫看到的是空的；这页原来只有 105 字正文） -->
+		<section class="mt-6 pt-6 border-t border-white/10 text-sm leading-relaxed text-75 space-y-3">
+			<h2 class="text-lg font-bold text-90 mb-3">关于这个画廊</h2>
+			<p>
+				这里放的是我写文章、做截图时攒下来的图片素材：横屏壁纸、竖屏封面，还有一些随手拍的画面。
+				顶部可以切换「横屏 / 竖屏」取向、在「最新」和随机之间切换；点开图片能看到原始尺寸。
+			</p>
+			<p>
+				和其它图床不同，这些图片<strong class="text-90">随站点一起构建</strong>，由同一套 CDN 分发。
+				没有第三方图床的防盗链、限速，也不会出现「某天图床跑路、文章里一片破图」的情况。
+			</p>
+			<h2 class="text-lg font-bold text-90 mt-6 mb-3">常见问题</h2>
+			<dl class="space-y-3">
+				<div>
+					<dt class="font-bold text-90">图片可以直接用吗？</dt>
+					<dd>壁纸类请向原作者或来源确认授权；我自己截的图（含界面截图）一般可以转载，注明出处即可。</dd>
+				</div>
+				<div>
+					<dt class="font-bold text-90">为什么这里的图和文章里的图分开？</dt>
+					<dd>
+						文章配图放在 <code class="px-1 bg-black/20 rounded">public/assets/images/posts/</code>
+						下按文章目录归档，方便和正文对应；这里是没归档的散图，两套目录分开管理。
+					</dd>
+				</div>
+				<div>
+					<dt class="font-bold text-90">滚动到底部会卡一下？</dt>
+					<dd>列表是懒加载 + 触底续取的，滚到底才开始拉下一批；图片总量不少时第一屏之后会略有停顿。</dd>
+				</div>
+			</dl>
+		</section>
 	</div>
 
 	<style>

@@ -24,6 +24,12 @@ interface Props {
 	setOGTypeArticle?: boolean;
 	ogImage?: string;
 	headings?: MarkdownHeading[];
+	/**
+	 * 页面级 h1 文案。列表类页面（首页、归档、分页）没有可见标题，
+	 * 用 sr-only 的 h1 补上语义 —— 全站原本这些页面 h1 数量是 0。
+	 * 有可见标题的页面（PageCardHeader 里已有 h1）不要传，否则会出现两个 h1。
+	 */
+	heading?: string;
 }
 
 const {
@@ -34,6 +40,7 @@ const {
 	setOGTypeArticle,
 	ogImage,
 	headings = [],
+	heading,
 } = Astro.props;
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
@@ -87,6 +94,8 @@ const mainPanelTop = siteConfig.banner.enable
             </div>
 
             <main id="main-content" class="row-start-1 col-span-1 overflow-visible min-w-0 lg:row-start-1 lg:col-start-2 lg:col-span-1 md:row-start-1 md:col-start-2 md:col-span-1">
+                {/* 列表类页面没有可见标题，补一个仅屏幕阅读器可见的 h1（搜索引擎同样能读到） */}
+                {heading && <h1 class="sr-only">{heading}</h1>}
                 <div id="content-wrapper">
                     <!-- the overflow-hidden here prevent long text break the layout-->
                     <Announcement></Announcement>

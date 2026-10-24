@@ -42,7 +42,12 @@ const jsonLd = {
 };
 ---
 
-<MainGridLayout title={page.currentPage === 1 ? undefined : `第 ${page.currentPage} 页`}>
+<MainGridLayout
+    title={page.currentPage === 1 ? undefined : `第 ${page.currentPage} 页`}
+    heading={page.currentPage === 1
+        ? `${siteConfig.title} · ${siteConfig.subtitle}`
+        : `${siteConfig.title} · 第 ${page.currentPage} 页`}
+>
     {page.currentPage === 1 && <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>}
     <PostSort slot="before-content"></PostSort>
     <PostPage page={page}></PostPage>

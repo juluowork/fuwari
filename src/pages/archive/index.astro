@@ -23,7 +23,11 @@ const breadcrumbSchema = {
 };
 ---
 
-<MainGridLayout title="归档">
+<MainGridLayout
+    title="归档"
+    heading="文章归档"
+    description="peroe 的博客全部文章归档，按年份分组、从新到旧排列。可以沿时间线翻阅所有技术笔记与折腾记录，适合从旧文里找前因后果与上下文。"
+>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
     <ArchivePanel></ArchivePanel>
 </MainGridLayout>

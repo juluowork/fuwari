@@ -55,7 +55,10 @@ const breadcrumbSchema = {
 };
 ---
 
-<MainGridLayout title={viewModel ? `课表 - 第${viewModel.currentWeek}周` : "课表"}>
+<MainGridLayout
+	title={viewModel ? `课表 - 第${viewModel.currentWeek}周` : "课表"}
+	description="课程表视图：按周展示课程安排，数据来自站内 JSON 文件，支持切换前后周次、查看课程详情与导出图片，方便快速确认当周要上什么课、在哪上课。"
+>
 	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
 	{viewModel ? (
 		<TimetablePageContent

@@ -27,7 +27,10 @@ const breadcrumbSchema = {
 };
 ---
 
-<MainGridLayout title="隐私政策">
+<MainGridLayout
+	title="隐私政策"
+	description="本站隐私政策：说明访问统计（Umami、自建计数、Google Analytics、Clarity）收集什么、Cookie 如何使用，以及你如何随时关掉它们。"
+>
 	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
 	<div class="p-6 md:p-8 border-b border-white/10">
 		<div class="flex items-center gap-2 mb-6">

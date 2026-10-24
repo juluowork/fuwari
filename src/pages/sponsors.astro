@@ -53,7 +53,10 @@ const breadcrumbSchema = {
 };
 ---
 
-<MainGridLayout title="赞助支持">
+<MainGridLayout
+	title="赞助支持"
+	description="如果这里的内容帮到了你，可以通过支付宝或微信赞赏支持本站。赞助会用于域名续费、服务器开销与内容创作，不提供任何付费服务，也不影响文章的开放获取。"
+>
     <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
     <div class="p-6 md:p-8 border-b border-white/10">
         <div class="flex items-center gap-2 mb-6">
