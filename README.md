@@ -5,7 +5,7 @@
 - 站点：<https://blog.peroe.cn>（2026-10-06 从 `blog.juluo.work` 迁来；旧域保留做 301 跳转与备用入口）
 - 仓库：<https://github.com/juluowork/fuwari>
 - 部署：Cloudflare Workers 静态资源模式，由 Cloudflare 从本仓库 `main` 分支构建
-- 写作规范：[`docs/writing-guide.md`](docs/writing-guide.md) ｜ 选题规划：[`docs/topic-plan.md`](docs/topic-plan.md) ｜ 服务清单：[`docs/cloudflare-services.md`](docs/cloudflare-services.md)
+- 写作规范：[`docs/writing-guide.md`](docs/writing-guide.md) ｜ 选题规划：[`docs/topic-plan.md`](docs/topic-plan.md) ｜ [SEO 维护手册](docs/seo.md) ｜ 服务清单：[`docs/cloudflare-services.md`](docs/cloudflare-services.md)
 
 > 本仓库做过个性化改造：移除论坛模块、清空原作者文章、接入自建访问统计、Giscus 评论、
 > 单篇文章密码保护、Bing 站长验证，并清理了原作者的推广跳转与失效服务。
@@ -133,6 +133,7 @@ https://blog.peroe.cn/posts/hello-world/    ← 线上地址
 │   └── link-card/              # 链接卡片元数据抓取（icon.peroe.cn）
 ├── docs/                       # 项目文档
 │   ├── writing-guide.md        # 写作规范（frontmatter、结构、配图、截图工具）
+│   ├── seo.md                  # SEO 维护手册（体检脚本、基线阈值、实现细节、发布自检）
 │   ├── topic-plan.md           # 选题规划（60 个选题 / 12 个方向）
 │   ├── cloudflare-services.md  # 自建服务与域名清单
 │   └── workers-deploy.md       # 部署方式
