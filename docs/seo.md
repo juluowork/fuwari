@@ -1,5 +1,7 @@
 # 站内 SEO 维护手册
 
+> 当前实测数字与待办清单见 [baseline.md](./baseline.md)（每轮更新）。
+
 > 对应文章：[博客 SEO 自我体检](/posts/blog-seo-self-audit/)
 > 体检脚本：`C:\Users\juluo\.dsh-tools\shots\seo-audit.py`（不进仓库，只在本机）
 
