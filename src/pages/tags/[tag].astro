@@ -10,7 +10,7 @@ import { getCollection } from "astro:content";
 import MainGridLayout from "../../layouts/MainGridLayout.astro";
 import { formatPostDateForDisplay } from "@/utils/date-utils";
 import { publicPosts } from "@/utils/post-visibility";
-import { collectTagCounts, qualifiedTags, tagPath } from "@/utils/tag-utils";
+import { collectTagCounts, qualifiedTags, tagIntro, tagPath } from "@/utils/tag-utils";
 
 export async function getStaticPaths() {
 	const posts = publicPosts(await getCollection("posts"));
@@ -34,6 +34,7 @@ const { tag, count, posts, allTags } = Astro.props;
 
 // 每个标签页要有「唯一 + 足够长」的描述，否则是重复薄内容。
 // 用该标签下最新的几篇文章标题拼出摘要，既唯一又带关键词。
+const intro = tagIntro(tag);
 const topTitles = posts.slice(0, 2).map((p) => p.data.title).join("、");
 const tagDescription = `peroe 的博客中带有「${tag}」标签的 ${count} 篇文章，按发布时间从新到旧排列，例如：${topTitles}。每篇都附带实测数据与可复现的命令。`;
 
@@ -70,6 +71,7 @@ const others = allTags.filter(([t]) => t !== tag).slice(0, 8);
 			这里收集了带「<strong class="text-90">{tag}</strong>」标签的
 			<strong class="text-90">{count}</strong> 篇文章，按发布时间从新到旧排列。
 		</p>
+		{intro && <p class="text-sm text-75 leading-relaxed mt-3 pt-3 border-t border-white/10">{intro}</p>}
 	</div>
 
 	<ul class="space-y-3">
