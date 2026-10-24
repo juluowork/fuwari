@@ -2,6 +2,7 @@ import type { Dirent } from "node:fs";
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
 import { getCollection } from "astro:content";
+import { collectTagCounts, qualifiedTags } from "./tag-utils";
 
 interface SitemapPage {
 	url: string;
@@ -63,6 +64,7 @@ export async function buildSitemapXml(site: string | URL): Promise<string> {
 		{ url: "/sponsors/", priority: 0.5, changefreq: "monthly" },
 		{ url: "/timetable/", priority: 0.5, changefreq: "monthly" },
 		{ url: "/privacy/", priority: 0.3, changefreq: "yearly" },
+		{ url: "/tags/", priority: 0.5, changefreq: "weekly" },
 	];
 
 	for (const page of staticPages) {
@@ -81,7 +83,23 @@ export async function buildSitemapXml(site: string | URL): Promise<string> {
 		lastmod: post.data.updated || post.data.published,
 	}));
 
-	const allPages: SitemapPage[] = [...staticPages, ...postPages];
+	// 标签落地页：与 /tags/[tag].astro 的生成条件保持一致（≥2 篇文章的标签才建页），
+	// 否则 sitemap 里会出现 404 地址。lastmod 取该标签下最新一篇文章的更新时间。
+	const tagCounts = collectTagCounts(posts);
+	const tagPages: SitemapPage[] = qualifiedTags(tagCounts).map(([tag]) => {
+		const tagged = posts.filter((post) => (post.data.tags ?? []).map(String).includes(tag));
+		const latest = tagged
+			.map((post) => new Date(post.data.updated || post.data.published))
+			.sort((a, b) => +b - +a)[0];
+		return {
+			url: `/tags/${encodeURIComponent(tag)}/`,
+			priority: 0.5,
+			changefreq: "weekly",
+			lastmod: latest,
+		};
+	});
+
+	const allPages: SitemapPage[] = [...staticPages, ...postPages, ...tagPages];
 
 	const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
