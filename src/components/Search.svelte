@@ -264,6 +264,7 @@ top-20 left-4 md:left-[unset] right-4 shadow-none rounded-2xl p-2">
   ">
         <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none ml-3 transition my-auto text-white/30"></Icon>
         <input placeholder="搜索" bind:value={keyword} on:focus={() => { void reopenPanelIfHasQuery(); }}
+        	aria-label="搜索文章"
                on:input={sanitizeKeyword}
                on:compositionstart={() => { isComposingMobile = true; }}
                on:compositionend={() => { isComposingMobile = false; sanitizeKeyword(); }}
