@@ -87,12 +87,6 @@ const mainPanelTop = siteConfig.banner.enable
                 </Icon>
             </a>}
 
-            <div id="sidebar" class="mb-4 row-start-2 col-span-1 lg:row-span-2 lg:row-start-1 lg:col-span-1 md:row-span-2 md:row-start-1 md:col-span-1 lg:max-w-[17.5rem] md:max-w-[17.5rem] relative">
-                <div id="sidebar-content" transition:persist>
-                    <SideBar headings={headings}></SideBar>
-                </div>
-            </div>
-
             <main id="main-content" class="row-start-1 col-span-1 overflow-visible min-w-0 lg:row-start-1 lg:col-start-2 lg:col-span-1 md:row-start-1 md:col-start-2 md:col-span-1">
                 {/* 列表类页面没有可见标题，补一个仅屏幕阅读器可见的 h1（搜索引擎同样能读到） */}
                 {heading && <h1 class="sr-only">{heading}</h1>}
@@ -108,6 +102,17 @@ const mainPanelTop = siteConfig.banner.enable
                     </div>
                 </div>
             </main>
+
+            {/* ⚠️ 侧栏放在 <main> 之后：视觉上手机端「主内容在上、侧栏在下」，
+                 如果 DOM 顺序是侧栏在前，那么 CSS 还没生效（或晚到）时浏览器会按 DOM
+                 顺序先把侧栏排在顶部，样式一到网格又把侧栏推下去 —— 实测这就是
+                 0.39 CLS 的来源（归档页、首页一致）。DOM 顺序与视觉顺序对齐后，
+                 任何「晚到样式」的兜底状态都和最终布局一致，偏移归零。 */}
+            <div id="sidebar" class="mb-4 row-start-2 col-span-1 lg:row-span-2 lg:row-start-1 lg:col-span-1 md:row-span-2 md:row-start-1 md:col-span-1 lg:max-w-[17.5rem] md:max-w-[17.5rem] relative">
+                <div id="sidebar-content" transition:persist>
+                    <SideBar headings={headings}></SideBar>
+                </div>
+            </div>
 
             <div id="footer" class="footer col-span-1 row-start-3 lg:col-span-1 lg:col-start-2 lg:row-start-2 md:col-span-1 md:col-start-2 md:row-start-2">
                 <Footer></Footer>
