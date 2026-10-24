@@ -131,3 +131,5 @@ document.addEventListener("DOMContentLoaded", $buo_f, false);
 审计脚本我留在本地工具目录里，以后每次加新服务都跑一次；目前第三方已经从 15 个域降到 14 个，剩下的每一个我都能说清它为什么存在。
 
 第三方里最容易被忽略的是评论系统（见 [Giscus 那篇](/posts/blog-giscus-comments/)）；至于两套统计为什么数字不同，见[两套统计对比](/posts/blog-analytics-compare/)。
+
+顺着「谁在收数据」再往下想一层，就是[我的博客向陌生人暴露了多少信息](/posts/blog-self-audit/)——证书日志、DNS、页面标识三层。
