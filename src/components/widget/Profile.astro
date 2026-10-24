@@ -16,11 +16,17 @@ for (const post of publicPosts(posts)) {
 		totalWords += remarkPluginFrontmatter.words;
 	}
 }
+
+// 头像按 DPR 给两档尺寸：qlogo 的 spec=0 是原图（实测 106.8KB），
+// spec=140 只有 6.2KB、spec=640 是 52.8KB。不加 srcset 的话手机也要下整张原图。
+const avatarSrcSet = config.avatar.includes("spec=0")
+	? `${config.avatar.replace("spec=0", "spec=140")} 1x, ${config.avatar.replace("spec=0", "spec=640")} 2x`
+	: undefined;
 ---
 <div class="p-3 border-b border-white/10">
     <div id="profile-avatar-container" class="relative mx-auto lg:mx-0 mb-3 max-w-[12rem] md:max-w-[16rem] lg:max-w-none">
         <div id="profile-avatar-wrapper" class="relative border border-white/10" style={`--theme-hue: ${siteConfig.themeColor.hue}`}>
-            <img src={config.avatar} alt="Profile Image of the Author" class="w-full h-full object-cover" width="640" height="640" loading="eager" decoding="async" />
+            <img src={config.avatar} srcset={avatarSrcSet} sizes="(max-width: 767px) 192px, 280px" alt="Profile Image of the Author" class="w-full h-full object-cover" width="640" height="640" loading="eager" decoding="async" fetchpriority="low" />
         </div>
     </div>
     <div class="px-2">

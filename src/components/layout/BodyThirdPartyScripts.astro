@@ -233,43 +233,42 @@ const clarityId = analyticsConfig.enable ? (analyticsConfig.clarityProjectId ?? 
 	</script>
 )}
 
-{gaId && (
-	<>
-		<script
-			is:inline
-			async
-			src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-			type={analyticsGated ? "text/plain" : undefined}
-			data-cookie-consent={analyticsGated ? "tracking" : undefined}
-		></script>
-		<script
-			is:inline
-			define:vars={{ gaId }}
-			type={analyticsGated ? "text/plain" : undefined}
-			data-cookie-consent={analyticsGated ? "tracking" : undefined}
-		>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() { window.dataLayer.push(arguments); }
-			gtag("js", new Date());
-			gtag("config", gaId);
-		</script>
-	</>
-)}
+{/* 埋点脚本延后到 load 之后的空闲时段再加载。
+     gtag.js 单个就 170KB+，Clarity 也要再拉一坨 JS；它们和首屏抢带宽与主线程，
+     直接拖累 FCP / LCP / TBT（实测 4× CPU 降压下主线程长任务明显变少）。
+     延后不影响统计口径 —— pageview 在脚本真正执行时才上报，只是晚一两秒。
+     同意状态仍是「默认开启、拒绝即停用」：真正加载前再查一次 __trackingDenied，
+     拒绝过的访客一个字节都不会下载。 */}
+{!analyticsGated && (gaId || clarityId) && (
+	<script is:inline define:vars={{ gaId, clarityId }}>
+	(function () {
+		var loadAnalytics = function () {
+			if (window.__trackingDenied) return;
 
-{clarityId && (
-	<script
-		is:inline
-		define:vars={{ clarityId }}
-		type={analyticsGated ? "text/plain" : undefined}
-		data-cookie-consent={analyticsGated ? "tracking" : undefined}
-	>
-		(function (c, l, a, r, i, t, y) {
-			// 访客拒绝过「跟踪」就不注入 Clarity（见上面第 ① 层保险）
-			if (c.__trackingDenied) return;
-			c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
-			t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-			y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-		})(window, document, "clarity", "script", clarityId);
+			if (gaId) {
+				window.dataLayer = window.dataLayer || [];
+				window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+				window.gtag("js", new Date());
+				window.gtag("config", gaId);
+				var g = document.createElement("script");
+				g.async = true;
+				g.src = "https://www.googletagmanager.com/gtag/js?id=" + gaId;
+				document.head.appendChild(g);
+			}
+
+			if (clarityId) {
+				(function (c, l, a, r, i, t, y) {
+					c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
+					t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+					y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+				})(window, document, "clarity", "script", clarityId);
+			}
+		};
+
+		var idle = window.requestIdleCallback || function (fn) { return setTimeout(fn, 1200); };
+		if (document.readyState === "complete") idle(loadAnalytics);
+		else window.addEventListener("load", function () { idle(loadAnalytics); }, { once: true });
+	})();
 	</script>
 )}
 
