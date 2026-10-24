@@ -13,6 +13,7 @@ import AIInvolvementCard from "@components/widget/AIInvolvementCard.astro";
 import DiffDebugEditor from "@components/widget/DiffDebugEditor.astro";
 import PasswordGate from "@components/widget/PasswordGate.svelte";
 import PostUpdateNotice from "@components/widget/PostUpdateNotice.astro";
+import RelatedPosts from "@components/widget/RelatedPosts.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
 import { serializePayloadForHtml } from "@utils/encrypted-format";
@@ -281,6 +282,9 @@ const jsonLd = [
             </div>
 
             {licenseConfig.enable && <License title={entry.data.title} slug={entry.id} pubDate={entry.data.published} class="mb-6 rounded-xl license-container"></License>}
+
+            {/* 自动相关文章：按共享标签与共同内链打分（构建期计算） */}
+            <RelatedPosts current={entry} />
             
             <!-- Giscus 评论区（配置见 src/config.ts 的 giscusConfig） -->
             {giscusConfig.enable && (

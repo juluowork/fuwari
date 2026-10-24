@@ -1,0 +1,71 @@
+---
+/**
+ * 自动「相关文章」：按「共享标签 ×3 + 共同站内链接 ×2 + 同系列 slug 前缀 ×1」打分，取前 3 篇。
+ *
+ * 为什么要自动：手工内链只能维持 1~2 条/篇，而且每发一篇都要回头补旧文；
+ * 这个区块在构建期算好、服务端渲染，新文章发出来就自动接入链接网络。
+ * 只保留 score > 0 的结果 —— 宁可不显示，也不塞无关链接。
+ */
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import { getSortedPosts } from "@/utils/content-utils";
+
+interface Props {
+	current: CollectionEntry<"posts">;
+}
+
+const { current } = Astro.props;
+
+const currentTags = new Set((current.data.tags ?? []).map((t) => String(t)));
+const currentLinks = new Set(
+	[...(current.body ?? "").matchAll(/\]\(\/posts\/([a-z0-9-]+)\/?\)/g)].map((m) => m[1]),
+);
+// slug 前缀（`blog-foo` → `blog`），同系列的文章互相关联度更高
+const prefixOf = (id: string) => id.split("-")[0];
+
+const all = await getCollection(
+	"posts",
+	({ data }) => !data.draft && data.encrypted !== true,
+);
+
+const scored = all
+	.filter((post) => post.id !== current.id)
+	.map((post) => {
+		const tags = post.data.tags ?? [];
+		const sharedTags = tags.filter((t) => currentTags.has(String(t))).length;
+		const postLinks = new Set(
+			[...(post.body ?? "").matchAll(/\]\(\/posts\/([a-z0-9-]+)\/?\)/g)].map((m) => m[1]),
+		);
+		// 双向：它链到我，或者我链到它，都算相关
+		const sharedLinks =
+			[...postLinks].filter((s) => currentLinks.has(s) || s === current.id).length +
+			[...currentLinks].filter((s) => s === post.id).length;
+		const sameSeries = prefixOf(post.id) === prefixOf(current.id) ? 1 : 0;
+		return { post, score: sharedTags * 3 + sharedLinks * 2 + sameSeries };
+	})
+	.filter((x) => x.score > 0)
+	.sort((a, b) => b.score - a.score || +b.post.data.published - +a.post.data.published)
+	.slice(0, 3);
+
+const related = scored.length > 0 ? scored.map((x) => x.post) : [];
+---
+
+{related.length > 0 && (
+	<section class="mb-6 mt-2">
+		<h2 class="text-lg font-bold text-90 mb-3">相关文章</h2>
+		<ul class="space-y-2">
+			{related.map((post) => (
+				<li class="border border-white/10 rounded-lg px-4 py-3 hover:border-[var(--primary)]/50 transition-colors">
+					<a href={`/posts/${post.id}/`} class="block group">
+						<span class="font-bold text-90 group-hover:text-[var(--primary)] transition-colors">
+							{post.data.title}
+						</span>
+						<span class="block text-xs text-50 mt-1">
+							{post.data.description || ""}
+						</span>
+					</a>
+				</li>
+			))}
+		</ul>
+	</section>
+)}
