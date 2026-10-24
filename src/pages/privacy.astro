@@ -53,7 +53,7 @@ const breadcrumbSchema = {
 				<li><strong>服务器日志</strong>：本站部署在 Cloudflare 上，访问时会产生常规访问日志（IP、时间、请求路径等），用于安全防护与故障排查。</li>
 								<li><strong>Cloudflare Web Analytics（RUM）</strong>：本站由 Cloudflare 提供 CDN，其“Web 分析”功能会注入一个很小的 <code>beacon.min.js</code>（<code>static.cloudflareinsights.com</code>）用于统计页面性能。它不使用 Cookie，但会向 Cloudflare 发送页面地址、加载耗时与浏览器信息。</li>
 				<li><strong>Cookie 同意横幅</strong>：横幅脚本由 <a href="https://www.termsfeed.com" target="_blank" rel="noopener noreferrer">TermsFeed</a> 提供（<code>www.termsfeed.com</code>），用于展示同意选项并记住你的选择（<code>cookie_consent_level</code>）。</li>
-				<li><strong>头像</strong>：侧栏头像取自 QQ 头像服务（<code>q2.qlogo.cn</code>），加载时会向腾讯的服务器发起请求；文章配图则随站点构建分发，不经过任何外部图床。</li>
+				<li><strong>头像与配图</strong>：侧栏头像与文章配图都已本地化，随站点构建分发（<code>/assets/avatar/</code>、<code>/assets/images/posts/</code>），不经过任何第三方图床，也不再从 QQ 头像服务拉取。</li>
 			</ul>
 
 			<h2>二、Cookie 与同意</h2>

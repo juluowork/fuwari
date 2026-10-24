@@ -27,10 +27,13 @@ const customDomain = `${blogSubdomain}.${rootDomain}`;
 
 // 个人 QQ（头像与联系入口都由它推导，换号只需改这一处）
 const qqNumber = "1576586736";
-const qqAvatar = `https://q2.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=0`;
+// 头像已本地化：原来直接引用 q2.qlogo.cn（URL 里带着 QQ 号，每个访客都能看到），
+// 而且原图 106.8KB。现在构建期取回并按 140/320/640 三档压成 WebP 放进 public/assets/avatar/，
+// 既不暴露 QQ 号，也不再向第三方发请求。
+const qqAvatar = "/assets/avatar/avatar-640.webp";
 // favicon 用同一张图的小尺寸版本：spec=0 是原图（实测 106.8KB），而浏览器会积极请求 favicon，
 // 等于每个访客白下 100KB；spec=140 只有 6.2KB，缩到 16/32px 依然清晰。
-const qqAvatarSmall = `https://q2.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=140`;
+const qqAvatarSmall = "/assets/avatar/avatar-140.webp";
 
 // 联系邮箱：**写死**，不要跟着 rootDomain 变 ——
 // peroe.cn 没有 MX 记录（邮箱在 juluo.work 上，route1-3.mx.cloudflare.net），
