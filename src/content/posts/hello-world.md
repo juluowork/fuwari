@@ -30,3 +30,5 @@ pinned: true
 
 文章基本都是我自己实践后整理的笔记，尽量写清楚「为什么这么做」而不只是「怎么做」。
 如果某篇文章帮到了你，欢迎在下方评论区留言（评论会同步到 GitHub Discussions）。
+
+这个博客陆续写过一些实现细节，比如[浏览量统计](/posts/blog-view-counter/)、[站内搜索](/posts/blog-static-search/)、[给文章上密码](/posts/blog-post-encryption/)，还有一篇讲网络排障的 [traceroute 误读](/posts/traceroute-packet-loss-misread/)。

@@ -170,3 +170,5 @@ print(f"min = {min(times):.1f} ms, avg = {statistics.mean(times):.1f} ms, max = 
 
 > [!NOTE]
 > 数据与截图说明：多节点路由追踪数据为 2026-10-05 晚在 tcptest.cn 实测（福建泉州电信节点，每跳 100 个包，完整结果见上面的 tcptest.cn 路由追踪结果）；本机 `tracert`、`ping -n 20` 与 TCP 连接测试均为同一晚在本机执行的真实输出，未做任何改动。由于本机 TUN 代理会让 `tracert` 只剩一跳，原计划做的"本机多目标 tracert 对比"拿不到任何中间跳数据，中间跳的分析因此改用 tcptest.cn 的节点侧追踪结果。
+
+同属「工具输出怎么读」的另一篇是 [SSL Labs 评分](/posts/ssllabs-https-grade/)：一个看网络路径，一个看 HTTPS 配置。

@@ -220,3 +220,5 @@ Element 'changefreq': This element is not expected.
 SEO 的日常因此更像**定期体检**而不是"修 bug"：写一支便宜的脚本、定一张规则表、每次改完模板跑一遍。这套流程两秒钟一次，比在站长后台等四天要划算得多。
 
 体检脚本我已经放进了本地工具目录（`seo-audit.py`），下一轮维护时直接复跑；等文章攒多一些，再补 `WebApplication`、`Article` 的多语言字段和 `sameAs` 之类的细节。
+
+体检里的性能部分单独写过一篇：[首屏从 392KB 砍到 59KB](/posts/blog-home-performance/)。

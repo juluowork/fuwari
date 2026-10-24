@@ -233,3 +233,5 @@ curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\n' http://blog.juluo.wo
 - **Cloudflare Workers 静态资源站，`public/_headers` 是成本最低、最可回滚的做法**：跟仓库走、跟构建走、能 diff 能 review。但它只管静态资源，Worker 生成的响应还得在代码里加。
 
 本文发布时站点还没有应用这些头，after 数据都是方案说明而不是实测结果。照上面四条命令复检即可。
+
+配合 HTTPS 配置的 [SSL Labs 评分](/posts/ssllabs-https-grade/)一起看，安全审计的两块就齐了。

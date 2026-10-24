@@ -10,3 +10,5 @@ draft: false
 passwordHint: "站长的昵称 + demo + 年份（全小写、连字符分隔）"
 encrypted: true
 ---
+
+这篇的加密方案、密钥派生与构建流程见[给文章上密码](/posts/blog-post-encryption/)。

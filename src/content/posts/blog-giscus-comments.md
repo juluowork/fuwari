@@ -100,3 +100,5 @@ Giscus 的接入成本很低（填六个字段、贴一段脚本），但有三�
 3. **验证方式**：量 iframe 高度、看 src 参数，比截图看一眼可靠。
 
 顺带说一句：这个站的评论数据（0 条）在 `juluowork/giscus` 仓库的 Discussions 里，如果要迁移或备份，直接导出就是 Markdown。
+
+评论是本站第三个「把访客交给别人」的地方，完整清单在[第三方请求审计](/posts/blog-third-party-audit/)。
