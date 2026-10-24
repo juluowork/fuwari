@@ -222,3 +222,7 @@ SEO 的日常因此更像**定期体检**而不是"修 bug"：写一支便宜的
 体检脚本我已经放进了本地工具目录（`seo-audit.py`），下一轮维护时直接复跑；等文章攒多一些，再补 `WebApplication`、`Article` 的多语言字段和 `sameAs` 之类的细节。
 
 体检里的性能部分单独写过一篇：[首屏从 392KB 砍到 59KB](/posts/blog-home-performance/)。
+
+把标签变成聚合页面的那次改造写在[静态站的标签体系](/posts/blog-tags-system/)里。
+
+这套体检的八项判据、九类真实问题与三条教训，后来单独整理成了[一份可复跑的清单](/posts/blog-seo-checklist/)。
