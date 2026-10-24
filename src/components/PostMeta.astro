@@ -12,10 +12,15 @@ interface Props {
 	hidePublishedDate?: boolean;
 	slug?: string;
 	showTime?: boolean;
+	tags?: string[];
+	/** 可建落地页的标签（文章数 >= 2）；不在其中的标签只显示为纯文本 */
+	linkableTags?: string[];
 }
 const {
 	published,
 	updated,
+	tags = [],
+	linkableTags = [],
 	hideUpdateDate = false,
 	hidePublishedDate = false,
 	slug,
@@ -43,6 +48,21 @@ const className = Astro.props.class;
                 <Icon name="material-symbols:edit-calendar-outline-rounded" class="text-xl"></Icon>
             </div>
             <span class="text-50 text-sm font-medium">{formatPostDateForDisplay(updated, showTime)}</span>
+        </div>
+    )}
+
+    <!-- tags：只有 >=2 篇文章的标签才链接到落地页，避免薄内容聚合页 -->
+    {tags.length > 0 && (
+        <div class="flex items-center flex-wrap gap-2">
+            <div class="meta-icon">
+                <Icon name="material-symbols:label-outline-rounded" class="text-xl"></Icon>
+            </div>
+            {tags.map((tag) => {
+                const href = `/tags/${encodeURIComponent(tag)}/`;
+                return linkableTags.includes(tag)
+                    ? <a href={href} class="text-xs px-2 py-0.5 rounded border border-white/15 hover:border-[var(--primary)]/60 hover:text-[var(--primary)] transition-colors">{tag}</a>
+                    : <span class="text-xs px-2 py-0.5 rounded border border-white/10 text-50">{tag}</span>;
+            })}
         </div>
     )}
 

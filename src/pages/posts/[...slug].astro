@@ -27,6 +27,9 @@ import { gitHubEditConfig, licenseConfig } from "src/config";
 import PostMetadata from "../../components/PostMeta.astro";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import { giscusConfig, profileConfig, randomImageConfig, siteConfig, umamiConfig } from "../../config";
+import { getCollection } from "astro:content";
+import { collectTagCounts, qualifiedTags } from "../../utils/tag-utils";
+import { publicPosts } from "../../utils/post-visibility";
 import {
 	formatDateToYYYYMMDD,
 	formatPostDateForDisplay,
@@ -41,6 +44,11 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+
+// 标签落地页只对「>= 2 篇文章」的标签生成（单篇标签属于薄内容），
+// 所以这里先算出可链接集合，把其余标签渲染成纯文本。
+const allPosts = publicPosts(await getCollection("posts"));
+const linkableTags = qualifiedTags(collectTagCounts(allPosts)).map(([tag]) => tag);
 const { Content, headings, remarkPluginFrontmatter } = await render(entry);
 
 // 加密文章：正文以密文形式提交（src/data/encrypted/<slug>.json），
@@ -172,6 +180,7 @@ const jsonLd = [
                         published={entry.data.published}
                         updated={entry.data.updated}
                         tags={entry.data.tags}
+                        linkableTags={linkableTags}
                         slug={entry.id}
                 ></PostMetadata>
                 {!entry.data.image && <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-5"></div>}

@@ -120,6 +120,12 @@ export const navBarConfig: NavBarConfig = {
 			icon: "material-symbols:build-outline-rounded",
 		},
 		{
+			name: "标签",
+			url: "/tags/",
+			external: false,
+			icon: "material-symbols:label-outline-rounded",
+		},
+		{
 			name: "统计",
 			url: `https://cloud.umami.is/analytics/us/share/${"JqAx99f9Wf6jWaGl"}`,
 			external: true,

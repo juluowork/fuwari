@@ -1,0 +1,101 @@
+---
+/**
+ * 单个标签的落地页。
+ *
+ * 目的有两个：① 给「建站 / Astro / 性能」这类标签一个可收录的聚合页，吃长尾词；
+ * ② 成为内链枢纽 —— 同一标签下的文章彼此可达。
+ * 只对 ≥2 篇文章的标签生成页面（薄内容不建页）。
+ */
+import { getCollection } from "astro:content";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import { formatPostDateForDisplay } from "@/utils/date-utils";
+import { publicPosts } from "@/utils/post-visibility";
+import { collectTagCounts, qualifiedTags, tagPath } from "@/utils/tag-utils";
+
+export async function getStaticPaths() {
+	const posts = publicPosts(await getCollection("posts"));
+	const counts = collectTagCounts(posts);
+	const tags = qualifiedTags(counts);
+
+	return tags.map(([tag, count]) => {
+		const tagged = posts
+			.filter((p) => (p.data.tags ?? []).map(String).includes(tag))
+			.sort((a, b) => +new Date(b.data.published) - +new Date(a.data.published));
+		return {
+			// ⚠️ 这里必须给「原始」标签名：Astro 会把 URL 里的中文解码后再匹配，
+			// 提前 encode 反而匹配不上（会报 NoMatchingStaticPathFound）。
+			params: { tag },
+			props: { tag, count, posts: tagged, allTags: tags },
+		};
+	});
+}
+
+const { tag, count, posts, allTags } = Astro.props;
+
+// 每个标签页要有「唯一 + 足够长」的描述，否则是重复薄内容。
+// 用该标签下最新的几篇文章标题拼出摘要，既唯一又带关键词。
+const topTitles = posts.slice(0, 2).map((p) => p.data.title).join("、");
+const tagDescription = `peroe 的博客中带有「${tag}」标签的 ${count} 篇文章，按发布时间从新到旧排列，例如：${topTitles}。每篇都附带实测数据与可复现的命令。`;
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "CollectionPage",
+	name: `标签：${tag}`,
+	url: new URL(tagPath(tag), Astro.site).toString(),
+	description: `peroe 的博客中带有「${tag}」标签的 ${count} 篇文章。`,
+	mainEntity: {
+		"@type": "ItemList",
+		numberOfItems: posts.length,
+		itemListElement: posts.slice(0, 20).map((p, i) => ({
+			"@type": "ListItem",
+			position: i + 1,
+			name: p.data.title,
+			url: new URL(`/posts/${p.id}/`, Astro.site).toString(),
+		})),
+	},
+};
+
+const others = allTags.filter(([t]) => t !== tag).slice(0, 8);
+---
+
+<MainGridLayout
+	title={`标签：${tag}`}
+	heading={`标签：${tag}`}
+	description={tagDescription}
+>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+
+	<div class="mb-4 p-6 rounded-xl bg-[var(--card-bg)] border border-white/10">
+		<p class="text-sm text-75 leading-relaxed">
+			这里收集了带「<strong class="text-90">{tag}</strong>」标签的
+			<strong class="text-90">{count}</strong> 篇文章，按发布时间从新到旧排列。
+		</p>
+	</div>
+
+	<ul class="space-y-3">
+		{posts.map((post) => (
+			<li class="p-5 rounded-xl bg-[var(--card-bg)] border border-white/10 hover:border-[var(--primary)]/50 transition-colors">
+				<a href={`/posts/${post.id}/`} class="block group">
+					<h2 class="font-bold text-90 text-lg group-hover:text-[var(--primary)] transition-colors">
+						{post.data.title}
+					</h2>
+					<p class="text-sm text-75 mt-2 leading-relaxed">{post.data.description}</p>
+					<p class="text-xs text-50 mt-2">{formatPostDateForDisplay(post.data.published)}</p>
+				</a>
+			</li>
+		))}
+	</ul>
+
+	{others.length > 0 && (
+		<div class="mt-6 p-5 rounded-xl border border-white/10">
+			<p class="text-sm text-75 mb-3">其他标签：</p>
+			<div class="flex flex-wrap gap-2">
+				{others.map(([t, n]) => (
+					<a href={tagPath(t)} class="px-3 py-1.5 text-xs rounded-lg border border-white/10 hover:border-[var(--primary)]/60 hover:text-[var(--primary)] transition-colors">
+						{t} <span class="text-50">{n}</span>
+					</a>
+				))}
+			</div>
+		</div>
+	)}
+</MainGridLayout>

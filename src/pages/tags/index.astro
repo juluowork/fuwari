@@ -1,0 +1,52 @@
+---
+import { getCollection } from "astro:content";
+import MainGridLayout from "../../layouts/MainGridLayout.astro";
+import { collectTagCounts, qualifiedTags, tagPath } from "@/utils/tag-utils";
+import { publicPosts } from "@/utils/post-visibility";
+
+const posts = publicPosts(await getCollection("posts"));
+const counts = collectTagCounts(posts);
+const tags = qualifiedTags(counts);
+
+const tagJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "CollectionPage",
+	name: "文章标签",
+	url: new URL("/tags/", Astro.site).toString(),
+	description: "peroe 的博客按标签分类的文章索引。",
+	hasPart: tags.slice(0, 20).map(([tag, n]) => ({
+		"@type": "ItemList",
+		name: tag,
+		numberOfItems: n,
+		url: new URL(tagPath(tag), Astro.site).toString(),
+	})),
+};
+---
+
+<MainGridLayout
+	title="标签"
+	heading="文章标签"
+	description="peroe 的博客按标签分类的文章索引：建站、Astro、性能优化、安全审计、Cloudflare、隐私与观测等主题下的全部文章，可按标签进入聚合页逐篇浏览。"
+>
+	<script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(tagJsonLd)}></script>
+
+	<div class="mb-4 p-6 rounded-xl bg-[var(--card-bg)] border border-white/10">
+		<p class="text-sm text-75 leading-relaxed">
+			共 <strong class="text-90">{tags.length}</strong> 个标签、
+			<strong class="text-90">{posts.length}</strong> 篇文章。
+			只列出至少 {2} 篇文章的标签 —— 只有一篇的标签会直接显示在文章底部，不单独建页。
+		</p>
+	</div>
+
+	<div class="flex flex-wrap gap-3">
+		{tags.map(([tag, n]) => (
+			<a
+				href={tagPath(tag)}
+				class="px-4 py-2 rounded-lg border border-white/10 hover:border-[var(--primary)]/60 hover:text-[var(--primary)] transition-colors text-sm"
+			>
+				{tag}
+				<span class="text-50 ml-1.5 text-xs">{n}</span>
+			</a>
+		))}
+	</div>
+</MainGridLayout>
