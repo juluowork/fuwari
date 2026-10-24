@@ -144,3 +144,19 @@ CLS 0.29~0.41 → **0.000**。根因不是 CSS 体积，而是**DOM 顺序与视
   「共享标签 ×3 + 共同站内链接 ×2 + 同系列 slug 前缀 ×1」打分，取前 3 篇渲染在文章底部。
   只保留 score > 0 的结果 —— 宁可不显示也不塞无关链接。新文章发布即自动接入链接网络。
 - 复查脚本：C:\Users\juluo\.dsh-tools\shots\link-audit.py（算入链/出链、找孤岛）。
+
+## 八、IndexNow（Bing / Yandex / Seznam 即时推送）
+
+站点根目录放一个 `<key>.txt`（内容是 key 本身），即可向 `https://api.indexnow.org/indexnow`
+提交 URL 列表，Bing / Yandex / Seznam 会立刻来抓。**Google 不支持 IndexNow**，
+那边只能靠 Search Console 提交 sitemap。
+
+```powershell
+# 推送 sitemap 里的全部 URL（或 --new 5 只推最新 5 条）
+$node = (Get-Command node).Source
+& $node C:\Users\juluo\.dsh-tools\shots\indexnow.mjs
+```
+
+- key 文件：`public/<key>.txt`（构建后即公开，`https://blog.peroe.cn/<key>.txt`）；
+- 当前 key 存在本地 `C:\Users\juluo\.dsh-tools\shots\.indexnow-key`，不进仓库；
+- 发布新文章后跑一次 `--new N` 即可。
