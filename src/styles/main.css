@@ -6,6 +6,16 @@
 /* @import "@toast-ui/editor/dist/toastui-editor.css"; */
 /* @import "@toast-ui/editor/dist/theme/toastui-editor-dark.css"; */
 
+/* ⚠️ 键盘焦点可见性：浏览器默认 outline 是近黑色（rgb(16,16,16)），
+   在深色背景上几乎看不见 —— 实测 Tab 到「归档」时 outline 为 auto 1px rgb(16,16,16)。
+   这里统一成主题色描边 + 2px 偏移，只在键盘导航时出现（:focus-visible），
+   不会影响鼠标点击的观感。 */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
 @tailwind components;
 
 @layer components {

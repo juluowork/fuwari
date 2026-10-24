@@ -96,3 +96,5 @@ python link-audit.py                       # 入链/出链/孤岛
 真正花时间的是修——尤其是那些"问题在模板里、影响全部页面"的项。但正因为它们在模板里，修一次就永久生效：h1、`og:image`、canonical 这三件事修完之后，后面每发一篇文章都自动合规。
 
 体检之后更麻烦的是性能：LCP 元素居然是 Cookie 横幅，两次尝试的过程写在[和 Cookie 横幅抢 LCP](/posts/blog-banner-lcp/)里。
+
+体检不止有 SEO 一种：键盘焦点、对比度、无障碍名称也值得查一遍，过程见[可访问性体检](/posts/blog-a11y-audit/)。
