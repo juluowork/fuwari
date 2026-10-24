@@ -22,9 +22,12 @@ export async function GET(context: APIContext): Promise<Response> {
 		throw Error("site not set");
 	}
 
-	// Use the same ordering as site listing (pinned first, then by published desc)
+	// ⚠️ 不要沿用列表排序：getSortedPosts() 会把置顶文章排在最前，于是「关于本站」永远是 feed 第一条，
+	// 新文章反而沉到后面 —— 订阅者看到的"最新"其实是几个月前的置顶文。feed 必须按时间倒序。
 	// 加密文章必须排除：RSS 会把正文全文写进产物
-	const posts = publicPosts(await getSortedPosts());
+	const posts = publicPosts(await getSortedPosts()).toSorted(
+		(a, b) => +new Date(b.data.published) - +new Date(a.data.published),
+	);
 	const feed: RSSFeedItem[] = [];
 
 	for (const post of posts) {

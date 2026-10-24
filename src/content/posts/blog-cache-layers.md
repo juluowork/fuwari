@@ -130,4 +130,4 @@ a Business plan or a WAF Advanced plan is required
 
 验证缓存改动只需要两个动作：**抓两遍响应头**（看 `Cache-Control` 与 `cf-cache-status`）、**发一次条件请求**（看是否 304）。两个都符合预期，才算真的缓存上了。
 
-首屏优化的完整背景（埋点延后、头像取图、关键 CSS 瘦身）见[这篇](/posts/blog-home-performance/)。
+首屏优化的完整背景（埋点延后、头像取图、关键 CSS 瘦身）见[首屏从 392KB 砍到 59KB](/posts/blog-home-performance/)。
