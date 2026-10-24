@@ -19,11 +19,15 @@ const clarityId = analyticsConfig.enable ? (analyticsConfig.clarityProjectId ?? 
 		script.async = true;
 		document.head.appendChild(script);
 	};
-	if (document.readyState === "complete") {
+	// ⚠️ 曾经等 window.load 之后再加载横幅，结果它在 12s 才出现 ——
+	// LCP 会一直记到用户首次交互，于是这个「晚出现的大块文案」顶替真实内容成了 LCP 元素
+	// （Lighthouse 实测 LCP 元素 = p.cc-nb-text）。改成 DOMContentLoaded 后横幅更早出现，
+	// 不再把 LCP 拖到十几秒。
+	if (document.readyState !== "loading") {
 		load();
 		return;
 	}
-	window.addEventListener("load", load, { once: true });
+	document.addEventListener("DOMContentLoaded", load, { once: true });
 })();
 </script>
 <!-- ⚠️ 这个脚本必须用 is:inline + define:vars：
